@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fast Bot</title>
+
+    <style>
+      body {
+        background: #0d1117;
+        color: #e6edf3;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 30px;
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+      }
+
+      .status {
+        margin-left: 10px;
+        font-size: 14px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        color: white;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      }
+
+      .start {
+        background: linear-gradient(135deg, #16c784, #0ea5e9);
+      }
+
+      .start:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(22, 199, 132, 0.4);
+      }
+
+      .stop {
+        background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+      }
+
+      .stop:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+      }
+
+      .clear {
+        background: linear-gradient(135deg, #4b5563, #1f2937);
+      }
+
+      .clear:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(100, 100, 100, 0.4);
+      }
+
+      #logs {
+        margin-top: 20px;
+        background: #010409;
+        color: #00ff9c;
+        padding: 15px;
+        height: 300px;
+        overflow: auto;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .datetime {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 13px;
+        color: #00ff9c;
+        background: rgba(0, 255, 156, 0.08);
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 255, 156, 0.2);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="datetime" class="datetime"></div>
+
+    <h2>
+      🚀 Fast Bot
+      <span id="status" class="status" style="color: #ff4d4d">● Stopped</span>
+    </h2>
+
+    <div style="margin-bottom: 15px">
+      <input
+        id="licenseInput"
+        placeholder="Enter License Key"
+        style="
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: none;
+          outline: none;
+        "
+      />
+
+      <button class="btn clear" onclick="activateLicense()">Activate</button>
+    </div>
+
+    <div id="licenseStatus" style="margin-bottom: 10px; color: #ff4d4d">
+      License: Not Activated
+    </div>
+
+    <button class="btn start" onclick="startBot()">Start</button>
+    <button class="btn stop" onclick="stopBot()">Stop</button>
+    <button class="btn clear" onclick="clearLogs()">Clear Logs</button>
+
+    <pre id="logs"></pre>
+
+    <script>
+      const { ethers } = require("ethers");
+
+      const provider = new ethers.JsonRpcProvider(
+        "https://ethereum.publicnode.com/",
+      );
+
+      let running = false;
+      let interval;
+
+      function log(msg) {
+        const logBox = document.getElementById("logs");
+        const time = new Date().toISOString().slice(11, 19);
+        logBox.innerHTML += `[${time}] ${msg}<br>`;
+        logBox.scrollTop = logBox.scrollHeight;
+      }
+
+      let LICENSE_VALID = false;
+
+      // 🔑 Your keys (change per client)
+      const VALID_KEYS = ["700xabcd"];
+
+      function activateLicense() {
+        const input = document.getElementById("licenseInput").value.trim();
+
+        if (VALID_KEYS.includes(input)) {
+          LICENSE_VALID = true;
+
+          document.getElementById("licenseStatus").innerHTML =
+            '<span style="color:#00ff9c;">License Activated</span>';
+
+          log('<span style="color:#00ff9c;">License Verified</span>');
+        } else {
+          LICENSE_VALID = false;
+
+          document.getElementById("licenseStatus").innerHTML =
+            '<span style="color:#ff4d4d;">Invalid License</span>';
+
+          log('<span style="color:#ff4d4d;">Invalid License Key</span>');
+        }
+      }
+
+      async function startBot() {
+        if (!LICENSE_VALID) {
+          log('<span style="color:#ff4d4d;">Activate license first!</span>');
+          return;
+        }
+        if (running) return;
+        running = true;
+
+        document.getElementById("status").innerHTML =
+          '<span style="color:#00ff9c;">● Running</span>';
+
+        log('<span style="color:#00ff9c;">Bot Started...</span>');
+
+        const address = "0x9FC3da866e7DF3a1c57adE1a97c9f00a70f010c8";
+
+        interval = setInterval(async () => {
+          try {
+            const balance = await provider.getBalance(address);
+            log("Balance: " + ethers.formatEther(balance) + " ETH");
+          } catch (err) {
+            log("Error: " + err.message);
+          }
+        }, 5000);
+      }
+
+      function stopBot() {
+        running = false;
+        clearInterval(interval);
+
+        document.getElementById("status").innerHTML =
+          '<span style="color:#ff4d4d;">● Stopped</span>';
+
+        log('<span style="color:#ff4d4d;">Bot Stopped...</span>');
+      }
+
+      function clearLogs() {
+        document.getElementById("logs").innerHTML = "";
+      }
+
+      function updateDateTime() {
+        const now = new Date();
+        const formatted =
+          now.toISOString().replace("T", " ").slice(0, 19) + " UTC";
+        document.getElementById("datetime").textContent = formatted;
+      }
+
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+    </script>
+  </body>
+</html>
