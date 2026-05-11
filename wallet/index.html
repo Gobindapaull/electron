@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Premium Wallet Generator</title>
+
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+
+    <div class="wrapper">
+
+      <div class="card">
+
+        <div class="logo">
+          🔐
+        </div>
+
+        <h1>Wallet Generator</h1>
+
+        <p class="subtitle">
+          Generate secure Ethereum wallets instantly
+        </p>
+
+        <button id="generateBtn">
+          Generate Wallet
+        </button>
+
+        <div id="message"></div>
+
+        <div class="input-group">
+
+          <label>
+            Wallet Address
+          </label>
+
+          <textarea
+            id="address"
+            placeholder="Generated wallet address..."
+          ></textarea>
+
+          <button id="copyAddressBtn">
+            Copy Address
+          </button>
+
+        </div>
+
+        <div class="input-group">
+
+          <label>
+            Private Key
+          </label>
+
+          <textarea
+            id="privateKey"
+            placeholder="Generated private key..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <script src="renderer.js"></script>
+
+  </body>
+</html>
