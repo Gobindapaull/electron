@@ -1,7 +1,7 @@
 {
-  "name": "database04",
+  "name": "walletgenerator",
   "version": "1.0.0",
-  "description": "",
+  "description": "Wallet address generator",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,6 +11,11 @@
   "build": {
     "appId": "com.wallet.generator",
     "productName": "Premium Wallet Generator",
+    "asar": false,
+    "files": [
+      "**/*",
+      "node_modules/**/*"
+    ],
     "win": {
       "target": "nsis"
     }
@@ -26,7 +31,6 @@
   },
   "devDependencies": {
     "electron": "^42.0.1",
-    "electron-builder": "^26.8.1",
-    "electron-reload": "^2.0.0-alpha.1"
+    "electron-builder": "^26.8.1"
   }
 }
